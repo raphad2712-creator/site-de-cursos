@@ -31,7 +31,7 @@ courseGrid.innerHTML = window.GAMBETI_COURSES.map(([name, category, image]) => `
     <div class="course-body">
       <div class="course-meta"><span>${category}</span><span>Curso EaD</span></div>
       <h3>${name}</h3>
-      <span class="course-cta">Entrar para acessar <b aria-hidden="true">↗</b></span>
+      <span class="course-cta">Entrar para acessar</span>
     </div>
   </a>
 `).join("");

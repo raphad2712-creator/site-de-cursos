@@ -41,14 +41,12 @@ button,input{font:inherit}
 .hero-stats strong{font:700 17px Manrope}
 .hero-stats span{font-size:13px;color:#94a8c3}
 .access-card{background:rgba(255,255,255,.97);color:var(--ink);padding:38px;border-radius:var(--radius);box-shadow:var(--shadow);position:relative}
-.access-icon{position:absolute;right:30px;top:28px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:#e9f4ff;color:var(--blue);font-weight:800}
 .access-kicker{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.14em}
 .access-card h2{font:800 30px/1.18 Manrope;margin:17px 0 12px}
 .access-card>p{color:var(--muted);margin:0 0 26px}
 .button-full{width:100%}
 .support-link{display:block;text-align:center;font-weight:600;font-size:14px;color:#3a5879;margin:18px 0 26px}
-.secure-note{border-top:1px solid var(--line);padding-top:20px;display:flex;gap:10px;color:#718097;font-size:13px;line-height:1.4}
-.secure-note span{flex:0 0 22px;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:#e2f3ff;color:var(--blue);font-weight:800}
+.secure-note{border-top:1px solid var(--line);padding-top:20px;color:#718097;font-size:13px;line-height:1.4}
 .hero-line{height:4px;background:linear-gradient(90deg,var(--blue),var(--cyan),transparent 75%)}
 .courses-section{padding:108px 0 96px;background:var(--paper)}
 .section-heading{display:grid;grid-template-columns:1.2fr .7fr;gap:100px;align-items:end}
@@ -168,8 +166,6 @@ button,input{font:inherit}
 .button{color:#352115;background:linear-gradient(135deg,#f0d260,#d5a52b);box-shadow:0 10px 24px rgba(213,169,43,.2)}
 .button:hover{color:#2c1a10;background:linear-gradient(135deg,#f6df7c,#e0b53d);box-shadow:0 14px 30px rgba(213,169,43,.3)}
 .access-card{border:1px solid #eadcbf;background:rgba(255,252,244,.98)}
-.access-icon{background:#f8edc8;color:#9a7010}
-.secure-note span{background:#f6e9bd;color:#8e660c}
 .hero-line{background:linear-gradient(90deg,#c99721,#ffe583,transparent 75%)}
 .courses-section{background:linear-gradient(180deg,#fbf7ec 0%,#f7f0df 100%)}
 .filter.active,.filter:hover{background:#4a2f20;border-color:#4a2f20}
@@ -192,8 +188,7 @@ button,input{font:inherit}
 .course-card:hover .course-photo img{transform:scale(1.035)}
 .course-photo-badge{position:absolute;left:14px;top:14px;padding:7px 10px;border-radius:6px;background:rgba(55,33,20,.9);color:#f7dc75;font:800 10px/1 Manrope,sans-serif;letter-spacing:.09em;box-shadow:0 5px 18px rgba(28,16,8,.18)}
 .course-meta span:first-child{max-width:72%}
-.course-cta{margin-top:auto;color:#a17412;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:space-between;padding-top:17px;border-top:1px solid #edf1f5}
-.course-cta b{font-size:18px}
+.course-cta{margin-top:auto;color:#a17412;font-weight:800;font-size:14px;display:flex;align-items:center;padding-top:17px;border-top:1px solid #edf1f5}
 .course-card:focus-visible{outline:3px solid #d5a92b;outline-offset:3px}
 @media (max-width:760px){.course-photo{height:200px}}
 

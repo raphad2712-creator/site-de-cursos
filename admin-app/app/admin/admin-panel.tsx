@@ -1,0 +1,56 @@
+"use client";
+
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { ArrowLeft, FileText, LogOut, Plus, Printer, Search, ShieldCheck, Trash2 } from "lucide-react";
+import { toast, Toaster } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
+type Certificate = { id:string; studentName:string; cpf:string; course:string; workload:string; completionDate:string; instructor:string; certificateCode:string; createdAt:string };
+const initialForm = { studentName:"", cpf:"", course:"", workload:"", completionDate:"", instructor:"Gambeti Engenharia e Treinamentos" };
+
+function formatDate(value:string) { return value ? new Intl.DateTimeFormat("pt-BR",{timeZone:"UTC"}).format(new Date(`${value}T12:00:00Z`)) : ""; }
+function formatCpf(value:string) { const digits=value.replace(/\D/g,"").slice(0,11); return digits.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2"); }
+
+export function AdminPanel({userName,signOutHref}:{userName:string;signOutHref:string}) {
+  const [form,setForm]=useState(initialForm),[items,setItems]=useState<Certificate[]>([]),[selected,setSelected]=useState<Certificate|null>(null);
+  const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[search,setSearch]=useState("");
+
+  async function load(){ setLoading(true); try{ const response=await fetch("/api/certificates",{cache:"no-store"}); const data=await response.json(); if(!response.ok)throw new Error(data.error); setItems(data.certificates); }catch(error){toast.error(error instanceof Error?error.message:"Não foi possível carregar os certificados.");}finally{setLoading(false);} }
+  useEffect(()=>{void load();},[]);
+  const filtered=useMemo(()=>{const term=search.trim().toLocaleLowerCase("pt-BR");return !term?items:items.filter((item)=>`${item.studentName} ${item.cpf} ${item.course} ${item.certificateCode}`.toLocaleLowerCase("pt-BR").includes(term));},[items,search]);
+
+  async function submit(event:FormEvent){event.preventDefault();setSaving(true);try{const response=await fetch("/api/certificates",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(form)});const data=await response.json();if(!response.ok)throw new Error(data.error);setItems((current)=>[data.certificate,...current]);setSelected(data.certificate);setForm(initialForm);toast.success("Certificado criado com sucesso.");}catch(error){toast.error(error instanceof Error?error.message:"Não foi possível criar o certificado.");}finally{setSaving(false);}}
+  async function remove(item:Certificate){if(!window.confirm(`Excluir o certificado de ${item.studentName}?`))return;const response=await fetch(`/api/certificates?id=${encodeURIComponent(item.id)}`,{method:"DELETE"});if(response.ok){setItems((current)=>current.filter((certificate)=>certificate.id!==item.id));if(selected?.id===item.id)setSelected(null);toast.success("Certificado excluído.");}else toast.error("Não foi possível excluir o certificado.");}
+
+  return <div className="admin-shell"><Toaster richColors position="top-right" />
+    <header className="admin-topbar"><div className="admin-wrap flex min-h-20 items-center justify-between gap-4">
+      <div className="flex min-w-0 items-center gap-3"><img src="/gambeti-logo.png" alt="Gambeti" className="h-12 w-12 rounded-lg bg-white object-contain p-1"/><div className="min-w-0"><strong className="block truncate text-base">Administração de certificados</strong><span className="block truncate text-sm text-muted-foreground">{userName}</span></div></div>
+      <div className="flex items-center gap-2"><Button asChild variant="outline" size="sm"><a href="/"><ArrowLeft/><span className="hidden sm:inline">Voltar ao site</span></a></Button><Button asChild variant="ghost" size="sm"><a href={signOutHref} target="_top"><LogOut/><span className="hidden sm:inline">Sair</span></a></Button></div>
+    </div></header>
+    <main className="admin-wrap py-8 lg:py-12">
+      <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><span className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-[#87651d]"><ShieldCheck className="size-4"/> Área protegida</span><h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Certificados</h1><p className="mt-2 text-base text-muted-foreground">Cadastre um formando e gere o certificado pronto para impressão.</p></div><div className="rounded-xl border border-[#dfcfaa] bg-[#fff8e7] px-4 py-3 text-sm"><strong>{items.length}</strong> certificados cadastrados</div></div>
+      <div className="grid gap-7 lg:grid-cols-[390px_minmax(0,1fr)]">
+        <Card className="h-fit border-[#dfd3c4] shadow-[0_18px_50px_rgba(70,43,25,.08)]"><CardHeader><CardTitle className="flex items-center gap-2"><Plus className="size-5 text-[#b88719]"/> Novo certificado</CardTitle></CardHeader><CardContent>
+          <form onSubmit={submit} className="space-y-4">
+            <Field id="studentName" label="Nome completo"><Input id="studentName" required value={form.studentName} onChange={(e)=>setForm({...form,studentName:e.target.value})} placeholder="Nome do formando"/></Field>
+            <Field id="cpf" label="CPF"><Input id="cpf" required inputMode="numeric" value={form.cpf} onChange={(e)=>setForm({...form,cpf:formatCpf(e.target.value)})} placeholder="000.000.000-00"/></Field>
+            <Field id="course" label="Curso"><Input id="course" required value={form.course} onChange={(e)=>setForm({...form,course:e.target.value})} placeholder="Ex.: NR 35 — Trabalho em Altura"/></Field>
+            <div className="grid grid-cols-2 gap-3"><Field id="workload" label="Carga horária"><Input id="workload" required value={form.workload} onChange={(e)=>setForm({...form,workload:e.target.value})} placeholder="8 horas"/></Field><Field id="completionDate" label="Conclusão"><Input id="completionDate" required type="date" value={form.completionDate} onChange={(e)=>setForm({...form,completionDate:e.target.value})}/></Field></div>
+            <Field id="instructor" label="Responsável / empresa"><Input id="instructor" required value={form.instructor} onChange={(e)=>setForm({...form,instructor:e.target.value})}/></Field>
+            <Button type="submit" disabled={saving} className="h-11 w-full bg-[#5a3622] hover:bg-[#432718]">{saving?"Salvando...":"Criar certificado"}</Button>
+          </form>
+        </CardContent></Card>
+        <section className="min-w-0"><div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><h2 className="text-xl font-bold">Histórico de formandos</h2><Label className="relative block sm:w-72"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"/><span className="sr-only">Buscar certificado</span><Input className="pl-9" value={search} onChange={(e)=>setSearch(e.target.value)} placeholder="Buscar nome, CPF ou curso"/></Label></div>
+          <div className="overflow-hidden rounded-xl border border-[#dfd3c4] bg-white shadow-[0_18px_50px_rgba(70,43,25,.06)]">{loading?<p className="p-8 text-center text-muted-foreground">Carregando certificados...</p>:filtered.length===0?<div className="p-10 text-center"><FileText className="mx-auto mb-3 size-9 text-[#b88719]"/><strong className="block">Nenhum certificado encontrado</strong><span className="mt-1 block text-sm text-muted-foreground">Use o formulário para cadastrar o primeiro formando.</span></div>:<div className="divide-y divide-border">{filtered.map((item)=><article key={item.id} className="flex flex-col gap-3 p-4 transition-colors hover:bg-[#fffcf5] sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><strong className="block truncate">{item.studentName}</strong><span className="block truncate text-sm text-muted-foreground">{item.course} · {item.workload}</span><span className="mt-1 block text-xs text-[#8d6a20]">{item.certificateCode}</span></div><div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={()=>setSelected(item)}><FileText/> Visualizar</Button><Button variant="ghost" size="icon-sm" aria-label={`Excluir certificado de ${item.studentName}`} onClick={()=>void remove(item)}><Trash2/></Button></div></article>)}</div>}</div>
+        </section>
+      </div>
+      {selected&&<section className="mt-10"><div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="text-xl font-bold">Prévia do certificado</h2><p className="text-sm text-muted-foreground">Confira os dados antes de imprimir ou salvar como PDF.</p></div><Button onClick={()=>window.print()} className="bg-[#b88719] text-white hover:bg-[#936b12]"><Printer/> Imprimir ou salvar PDF</Button></div><CertificateView certificate={selected}/></section>}
+    </main>
+  </div>;
+}
+
+function Field({id,label,children}:{id:string;label:string;children:React.ReactNode}){return <div className="space-y-2"><Label htmlFor={id}>{label}</Label>{children}</div>;}
+function CertificateView({certificate}:{certificate:Certificate}){return <div id="print-certificate" className="certificate-paper"><div className="relative z-10 flex h-full flex-col items-center justify-between"><img src="/gambeti-logo.png" alt="Gambeti Engenharia e Treinamentos" className="h-20 w-20 object-contain sm:h-28 sm:w-28"/><div><p className="certificate-title text-xs font-bold text-[#a77a1a] sm:text-base">CERTIFICADO</p><h2 className="mt-4 font-serif text-2xl font-bold sm:text-5xl">Certificamos que</h2><p className="my-4 border-b-2 border-[#d3aa3d] px-4 pb-2 font-serif text-xl font-bold text-[#5a3622] sm:my-7 sm:px-10 sm:text-4xl">{certificate.studentName}</p><p className="mx-auto max-w-3xl text-sm leading-relaxed sm:text-xl">concluiu o curso <strong>{certificate.course}</strong>, com carga horária de <strong>{certificate.workload}</strong>, em {formatDate(certificate.completionDate)}.</p></div><div className="grid w-full grid-cols-2 gap-8 text-xs sm:text-base"><div className="border-t border-[#8d765f] pt-2"><strong>{certificate.instructor}</strong><span className="block text-muted-foreground">Responsável pela formação</span></div><div className="border-t border-[#8d765f] pt-2"><strong>{certificate.certificateCode}</strong><span className="block text-muted-foreground">Código do certificado · CPF {certificate.cpf}</span></div></div></div></div>;}

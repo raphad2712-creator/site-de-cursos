@@ -1,7 +1,7 @@
-import { and, desc, eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { certificates } from "@/db/schema";
-import { getChatGPTUser } from "@/app/chatgpt-auth";
+import { getAdminSession } from "@/app/admin-auth";
 
 const clean = (value: unknown, max = 160) => typeof value === "string" ? value.trim().slice(0, max) : "";
 
@@ -11,10 +11,10 @@ function errorMessage(error: unknown) {
 }
 
 export async function GET() {
-  const user = await getChatGPTUser();
-  if (!user) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
+  const session = await getAdminSession();
+  if (!session) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
   try {
-    const rows = await getDb().select().from(certificates).where(eq(certificates.ownerId, user.userId)).orderBy(desc(certificates.createdAt)).limit(100);
+    const rows = await getDb().select().from(certificates).orderBy(desc(certificates.createdAt)).limit(100);
     return Response.json({ certificates: rows });
   } catch (error) {
     return Response.json({ error: errorMessage(error) }, { status: 500 });
@@ -22,8 +22,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const user = await getChatGPTUser();
-  if (!user) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
+  const session = await getAdminSession();
+  if (!session) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
   try {
     const body = (await request.json()) as Record<string, unknown>;
     const studentName = clean(body.studentName), cpf = clean(body.cpf, 20), course = clean(body.course);
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     const instructor = clean(body.instructor) || "Gambeti Engenharia e Treinamentos";
     if (!studentName || !cpf || !course || !workload || !completionDate) return Response.json({ error: "Preencha todos os campos obrigatórios." }, { status: 400 });
     const code = `GAM-${new Date().getFullYear()}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-    const [created] = await getDb().insert(certificates).values({ id: crypto.randomUUID(), ownerId: user.userId, studentName, cpf, course, workload, completionDate, instructor, certificateCode: code }).returning();
+    const [created] = await getDb().insert(certificates).values({ id: crypto.randomUUID(), ownerId: session.username, studentName, cpf, course, workload, completionDate, instructor, certificateCode: code }).returning();
     return Response.json({ certificate: created }, { status: 201 });
   } catch (error) {
     return Response.json({ error: errorMessage(error) }, { status: 500 });
@@ -39,10 +39,10 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  const user = await getChatGPTUser();
-  if (!user) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
+  const session = await getAdminSession();
+  if (!session) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
   const id = new URL(request.url).searchParams.get("id")?.trim();
   if (!id) return Response.json({ error: "Certificado inválido." }, { status: 400 });
-  await getDb().delete(certificates).where(and(eq(certificates.id, id), eq(certificates.ownerId, user.userId)));
+  await getDb().delete(certificates).where(eq(certificates.id, id));
   return Response.json({ ok: true });
 }

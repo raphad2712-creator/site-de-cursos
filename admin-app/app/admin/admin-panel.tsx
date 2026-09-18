@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { ArrowLeft, FileText, LogOut, Plus, Printer, Search, ShieldCheck, Trash2 } from "lucide-react";
+import { ArrowLeft, FileText, KeyRound, LogOut, Plus, Printer, Search, ShieldCheck, Trash2 } from "lucide-react";
 import { toast, Toaster } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,9 +14,10 @@ const initialForm = { studentName:"", cpf:"", course:"", workload:"", completion
 function formatDate(value:string) { return value ? new Intl.DateTimeFormat("pt-BR",{timeZone:"UTC"}).format(new Date(`${value}T12:00:00Z`)) : ""; }
 function formatCpf(value:string) { const digits=value.replace(/\D/g,"").slice(0,11); return digits.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2"); }
 
-export function AdminPanel({userName,signOutHref}:{userName:string;signOutHref:string}) {
+export function AdminPanel({userName}:{userName:string}) {
   const [form,setForm]=useState(initialForm),[items,setItems]=useState<Certificate[]>([]),[selected,setSelected]=useState<Certificate|null>(null);
   const [loading,setLoading]=useState(true),[saving,setSaving]=useState(false),[search,setSearch]=useState("");
+  const [currentPassword,setCurrentPassword]=useState(""),[newPassword,setNewPassword]=useState(""),[changingPassword,setChangingPassword]=useState(false);
 
   async function load(){ setLoading(true); try{ const response=await fetch("/api/certificates",{cache:"no-store"}); const data=await response.json(); if(!response.ok)throw new Error(data.error); setItems(data.certificates); }catch(error){toast.error(error instanceof Error?error.message:"Não foi possível carregar os certificados.");}finally{setLoading(false);} }
   useEffect(()=>{void load();},[]);
@@ -24,11 +25,13 @@ export function AdminPanel({userName,signOutHref}:{userName:string;signOutHref:s
 
   async function submit(event:FormEvent){event.preventDefault();setSaving(true);try{const response=await fetch("/api/certificates",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(form)});const data=await response.json();if(!response.ok)throw new Error(data.error);setItems((current)=>[data.certificate,...current]);setSelected(data.certificate);setForm(initialForm);toast.success("Certificado criado com sucesso.");}catch(error){toast.error(error instanceof Error?error.message:"Não foi possível criar o certificado.");}finally{setSaving(false);}}
   async function remove(item:Certificate){if(!window.confirm(`Excluir o certificado de ${item.studentName}?`))return;const response=await fetch(`/api/certificates?id=${encodeURIComponent(item.id)}`,{method:"DELETE"});if(response.ok){setItems((current)=>current.filter((certificate)=>certificate.id!==item.id));if(selected?.id===item.id)setSelected(null);toast.success("Certificado excluído.");}else toast.error("Não foi possível excluir o certificado.");}
+  async function logout(){await fetch("/api/admin/logout",{method:"POST"});window.location.href="/admin/login";}
+  async function updatePassword(event:FormEvent){event.preventDefault();setChangingPassword(true);try{const response=await fetch("/api/admin/password",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({currentPassword,newPassword})});const data=await response.json();if(!response.ok)throw new Error(data.error);setCurrentPassword("");setNewPassword("");toast.success("Senha alterada com sucesso.");}catch(error){toast.error(error instanceof Error?error.message:"Não foi possível alterar a senha.");}finally{setChangingPassword(false);}}
 
   return <div className="admin-shell"><Toaster richColors position="top-right" />
     <header className="admin-topbar"><div className="admin-wrap flex min-h-20 items-center justify-between gap-4">
       <div className="flex min-w-0 items-center gap-3"><img src="/gambeti-logo.png" alt="Gambeti" className="h-12 w-12 rounded-lg bg-white object-contain p-1"/><div className="min-w-0"><strong className="block truncate text-base">Administração de certificados</strong><span className="block truncate text-sm text-muted-foreground">{userName}</span></div></div>
-      <div className="flex items-center gap-2"><Button asChild variant="outline" size="sm"><a href="/"><ArrowLeft/><span className="hidden sm:inline">Voltar ao site</span></a></Button><Button asChild variant="ghost" size="sm"><a href={signOutHref} target="_top"><LogOut/><span className="hidden sm:inline">Sair</span></a></Button></div>
+      <div className="flex items-center gap-2"><Button asChild variant="outline" size="sm"><a href="/"><ArrowLeft/><span className="hidden sm:inline">Voltar ao site</span></a></Button><Button type="button" variant="ghost" size="sm" onClick={()=>void logout()}><LogOut/><span className="hidden sm:inline">Sair</span></Button></div>
     </div></header>
     <main className="admin-wrap py-8 lg:py-12">
       <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"><div><span className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-[#87651d]"><ShieldCheck className="size-4"/> Área protegida</span><h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Certificados</h1><p className="mt-2 text-base text-muted-foreground">Cadastre um formando e gere o certificado pronto para impressão.</p></div><div className="rounded-xl border border-[#dfcfaa] bg-[#fff8e7] px-4 py-3 text-sm"><strong>{items.length}</strong> certificados cadastrados</div></div>
@@ -48,6 +51,7 @@ export function AdminPanel({userName,signOutHref}:{userName:string;signOutHref:s
         </section>
       </div>
       {selected&&<section className="mt-10"><div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div><h2 className="text-xl font-bold">Prévia do certificado</h2><p className="text-sm text-muted-foreground">Confira os dados antes de imprimir ou salvar como PDF.</p></div><Button onClick={()=>window.print()} className="bg-[#b88719] text-white hover:bg-[#936b12]"><Printer/> Imprimir ou salvar PDF</Button></div><CertificateView certificate={selected}/></section>}
+      <Card className="mt-10 max-w-xl border-[#dfd3c4]"><CardHeader><CardTitle className="flex items-center gap-2"><KeyRound className="size-5 text-[#b88719]"/> Alterar senha</CardTitle></CardHeader><CardContent><form onSubmit={updatePassword} className="grid gap-4 sm:grid-cols-2"><Field id="currentPassword" label="Senha atual"><Input id="currentPassword" type="password" autoComplete="current-password" required value={currentPassword} onChange={(event)=>setCurrentPassword(event.target.value)}/></Field><Field id="newPassword" label="Nova senha"><Input id="newPassword" type="password" autoComplete="new-password" required minLength={10} value={newPassword} onChange={(event)=>setNewPassword(event.target.value)} placeholder="Mínimo de 10 caracteres"/></Field><Button type="submit" disabled={changingPassword} className="sm:col-span-2">{changingPassword?"Alterando...":"Salvar nova senha"}</Button></form></CardContent></Card>
     </main>
   </div>;
 }

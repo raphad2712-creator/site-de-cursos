@@ -8,6 +8,7 @@
 .admin-shell{min-height:100vh;background:linear-gradient(145deg,#f8f4ea 0%,#efe4cf 100%)}
 .admin-topbar{position:sticky;top:0;z-index:20;border-bottom:1px solid rgba(100,65,40,.16);background:rgba(255,252,246,.94);backdrop-filter:blur(16px)}
 .admin-wrap{width:min(1180px,calc(100% - 32px));margin:0 auto}
+.admin-login{min-height:100dvh;display:grid;place-items:center;padding:24px;background:radial-gradient(circle at top,#f5e5b8 0,transparent 35%),linear-gradient(145deg,#f8f4ea,#dfccb0)}
 .certificate-paper{position:relative;overflow:hidden;aspect-ratio:1.414/1;width:100%;background:#fffdf7;border:12px solid #5a3622;box-shadow:inset 0 0 0 3px #d3aa3d;color:#332116;padding:clamp(28px,5vw,70px);text-align:center}
 .certificate-paper:before,.certificate-paper:after{content:"";position:absolute;width:180px;height:180px;border:28px solid rgba(197,151,43,.13);transform:rotate(45deg)}
 .certificate-paper:before{top:-110px;left:-110px}.certificate-paper:after{right:-110px;bottom:-110px}.certificate-title{font-family:Georgia,serif;letter-spacing:.15em}

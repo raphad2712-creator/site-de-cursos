@@ -35,3 +35,13 @@ export const loginAttempts = sqliteTable("login_attempts", {
   attemptKey: text("attempt_key").notNull(),
   failedAt: text("failed_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 }, (table) => [index("idx_login_attempts_key_time").on(table.attemptKey, table.failedAt)]);
+
+export const managedCourses = sqliteTable("managed_courses", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  category: text("category").notNull(),
+  imageUrl: text("image_url").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+}, (table) => [index("idx_managed_courses_sort").on(table.sortOrder)]);

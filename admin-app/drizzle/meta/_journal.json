@@ -15,6 +15,13 @@
       "when": 1789775129733,
       "tag": "0001_lovely_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1789780400187,
+      "tag": "0002_redundant_vulture",
+      "breakpoints": true
     }
   ]
 }

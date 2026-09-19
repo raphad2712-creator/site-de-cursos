@@ -22,25 +22,42 @@ const categoryKey = (category) => {
 };
 
 const courseGrid = document.querySelector("#course-grid");
-courseGrid.innerHTML = window.GAMBETI_COURSES.map(([name, category, image]) => `
-  <a class="course-card" data-category="${categoryKey(category)}" data-search="${name.toLocaleLowerCase("pt-BR")}" href="${LOGIN_URL}" target="_blank" rel="noopener noreferrer external" aria-label="${name} — entrar para acessar">
+const search = document.querySelector("#course-search");
+const filters = [...document.querySelectorAll(".filter")];
+const empty = document.querySelector("#empty-state");
+let cards = [];
+let activeFilter = "todos";
+
+const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;",
+}[character]));
+
+function renderCourses(courses) {
+  courseGrid.innerHTML = courses.map((course) => {
+    const [name, category, image] = Array.isArray(course) ? course : [course.name, course.category, course.image];
+    const safeName = escapeHtml(name);
+    const safeCategory = escapeHtml(category);
+    const safeImage = escapeHtml(image);
+    const key = categoryKey(category);
+    return `
+  <a class="course-card" data-category="${key}" data-search="${escapeHtml(name.toLocaleLowerCase("pt-BR"))}" href="${LOGIN_URL}" target="_blank" rel="noopener noreferrer external" aria-label="${safeName} — entrar para acessar">
     <div class="course-photo">
-      <img src="${image}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
-      <span class="course-photo-badge">${categoryKey(category) === "seguranca" ? "SEGURANÇA" : category.split(" - ")[0]}</span>
+      <img src="${safeImage}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+      <span class="course-photo-badge">${key === "seguranca" ? "SEGURANÇA" : escapeHtml(category.split(" - ")[0])}</span>
     </div>
     <div class="course-body">
-      <div class="course-meta"><span>${category}</span><span>Curso EaD</span></div>
-      <h3>${name}</h3>
+      <div class="course-meta"><span>${safeCategory}</span><span>Curso EaD</span></div>
+      <h3>${safeName}</h3>
       <span class="course-cta">Entrar para acessar</span>
     </div>
   </a>
-`).join("");
-
-const search = document.querySelector("#course-search");
-const filters = [...document.querySelectorAll(".filter")];
-const cards = [...document.querySelectorAll(".course-card")];
-const empty = document.querySelector("#empty-state");
-let activeFilter = "todos";
+  `;
+  }).join("");
+  cards = [...document.querySelectorAll(".course-card")];
+  const allFilter = document.querySelector('[data-filter="todos"]');
+  if (allFilter) allFilter.textContent = `Todos (${courses.length})`;
+  updateCourses();
+}
 
 function updateCourses() {
   const term = search.value.trim().toLocaleLowerCase("pt-BR");
@@ -64,5 +81,19 @@ filters.forEach((filter) => filter.addEventListener("click", () => {
   });
   updateCourses();
 }));
+
+async function loadCourses() {
+  const fallback = window.GAMBETI_COURSES || [];
+  try {
+    const response = await fetch("https://gambeti-ead.raphadd2712.chatgpt.site/api/public/courses", { cache: "no-store" });
+    if (!response.ok) throw new Error("Catálogo indisponível");
+    const data = await response.json();
+    renderCourses(Array.isArray(data.courses) ? data.courses : fallback);
+  } catch {
+    renderCourses(fallback);
+  }
+}
+
+void loadCourses();
 
 document.querySelector("#year").textContent = new Date().getFullYear();

@@ -8,6 +8,7 @@ const COOKIE_NAME = "gambeti_admin_session";
 const SESSION_SECONDS = 60 * 60 * 12;
 const MAX_ATTEMPTS = 5;
 const ATTEMPT_WINDOW_MINUTES = 15;
+const PASSWORD_ITERATIONS = 100000;
 
 function bytesToHex(bytes: Uint8Array) {
   return [...bytes].map((value) => value.toString(16).padStart(2, "0")).join("");
@@ -45,7 +46,7 @@ async function credentialsFor(username: string) {
     username: envUsername,
     passwordHash: env.ADMIN_PASSWORD_HASH,
     passwordSalt: env.ADMIN_PASSWORD_SALT,
-    iterations: Number(env.ADMIN_PASSWORD_ITERATIONS ?? "210000"),
+    iterations: Math.min(Number(env.ADMIN_PASSWORD_ITERATIONS ?? String(PASSWORD_ITERATIONS)), PASSWORD_ITERATIONS),
     updatedAt: "",
   };
 }
@@ -83,7 +84,7 @@ export async function destroyAdminSession() {
 
 export async function changeAdminPassword(username: string, password: string) {
   const salt = bytesToHex(crypto.getRandomValues(new Uint8Array(18)));
-  const iterations = 210000;
+  const iterations = PASSWORD_ITERATIONS;
   const hash = await passwordHash(password, salt, iterations);
   await getDb().insert(adminCredentials).values({ id: 1, username, passwordHash: hash, passwordSalt: salt, iterations })
     .onConflictDoUpdate({ target: adminCredentials.id, set: { username, passwordHash: hash, passwordSalt: salt, iterations, updatedAt: new Date().toISOString() } });

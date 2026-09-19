@@ -27,7 +27,7 @@ async function authorized() {
 export async function GET() {
   if (!(await authorized())) return Response.json({ error: "Acesso não autorizado." }, { status: 401 });
   try {
-    const stored = await getDb().select().from(managedCourses).orderBy(asc(managedCourses.sortOrder));
+    const stored = await getDb().select().from(managedCourses).where(eq(managedCourses.active, true)).orderBy(asc(managedCourses.sortOrder));
     return Response.json({ courses: stored.length ? stored : defaultCourseRows() });
   } catch {
     return Response.json({ error: "Não foi possível carregar os cursos." }, { status: 500 });
@@ -68,6 +68,6 @@ export async function DELETE(request: Request) {
   const id = new URL(request.url).searchParams.get("id")?.trim();
   if (!id) return Response.json({ error: "Curso inválido." }, { status: 400 });
   await ensureDefaultCourses();
-  await getDb().delete(managedCourses).where(eq(managedCourses.id, id));
+  await getDb().update(managedCourses).set({ active: false, updatedAt: new Date().toISOString() }).where(eq(managedCourses.id, id));
   return Response.json({ ok: true });
 }

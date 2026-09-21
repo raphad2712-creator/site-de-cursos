@@ -5,7 +5,210 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#4a2f20">
   <title>Painel administrativo | Gambeti EaD</title>
-  <style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#f6f0e5;color:#30251f;font:16px/1.6 Arial,sans-serif}main{width:min(520px,100%);padding:36px;border:1px solid #dfd3c1;border-radius:20px;background:#fff;box-shadow:0 24px 70px rgba(60,38,24,.13)}span{color:#c78d2d;font-size:12px;font-weight:800;letter-spacing:.16em}h1{margin:8px 0;color:#4a2f20}p{color:#756a62}a{display:inline-flex;min-height:46px;align-items:center;justify-content:center;padding:0 20px;border-radius:10px;background:#4a2f20;color:#fff;font-weight:800;text-decoration:none}</style>
+  <style>
+    :root{--brown:#4a2f20;--gold:#c78d2d;--cream:#f6f0e5;--line:#dfd3c1;--text:#30251f;--muted:#756a62;--danger:#a33131;--green:#176b48}
+    *{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--text);font:15px/1.5 Arial,sans-serif}button,input{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+    .login-page{min-height:100vh;display:grid;place-items:center;padding:20px}.login-card{width:min(440px,100%);padding:32px;border:1px solid var(--line);border-radius:22px;background:#fff;box-shadow:0 24px 70px rgba(60,38,24,.13)}
+    .kicker{color:var(--gold);font-size:12px;font-weight:800;letter-spacing:.14em}.login-card h1{margin:8px 0 4px;font-size:30px}.login-card p{margin:0 0 22px;color:var(--muted)}label{display:grid;gap:7px;margin:13px 0;font-weight:700}input{width:100%;min-height:46px;padding:10px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--text)}input:focus{outline:3px solid rgba(199,141,45,.18);border-color:var(--gold)}
+    .primary,.secondary,.danger,.icon-button{min-height:44px;border:0;border-radius:10px;padding:0 16px;font-weight:800}.primary{background:var(--brown);color:#fff}.secondary{border:1px solid var(--line);background:#fff;color:var(--brown)}.danger{background:#fff0f0;color:var(--danger);border:1px solid #efc4c4}.login-card .primary{width:100%;margin-top:10px}.message{min-height:24px;margin-top:12px;font-weight:700;color:var(--danger)}
+    .app{min-height:100vh}.topbar{position:sticky;top:0;z-index:10;background:var(--brown);color:#fff}.topbar-inner{width:min(1180px,100%);margin:auto;min-height:72px;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand strong{display:block;font-size:18px}.brand span{color:#e7c98c;font-size:12px}.top-actions{display:flex;gap:8px}.top-actions a{display:grid;place-items:center;min-height:42px;padding:0 14px;border:1px solid rgba(255,255,255,.3);border-radius:9px;color:#fff;text-decoration:none;font-weight:700}.top-actions button{color:#fff;border-color:rgba(255,255,255,.3);background:transparent}
+    .layout{width:min(1180px,100%);margin:auto;padding:26px 20px 60px}.heading{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:20px}.heading h1{margin:4px 0;font-size:clamp(28px,4vw,44px)}.heading p{margin:0;color:var(--muted)}.count{padding:10px 15px;border-radius:999px;background:#ebe1d1;color:var(--brown);font-weight:800;white-space:nowrap}
+    .publish-box{display:grid;grid-template-columns:1fr auto;align-items:end;gap:12px;margin-bottom:22px;padding:18px;border:1px solid #d7c6aa;border-radius:16px;background:#fff8e9}.publish-box label{margin:0}.publish-box small{color:var(--muted);font-weight:400}.publish-status{grid-column:1/-1;min-height:22px;font-weight:700}.publish-status.success{color:var(--green)}.publish-status.error{color:var(--danger)}
+    .workspace{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:20px;align-items:start}.panel{border:1px solid var(--line);border-radius:18px;background:#fff;overflow:hidden}.panel-head{padding:18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h2{margin:0;font-size:20px}.panel-head input{max-width:320px}.course-list{display:grid;max-height:68vh;overflow:auto}.course-row{display:grid;grid-template-columns:54px minmax(0,1fr) auto;align-items:center;gap:13px;padding:13px 16px;border-bottom:1px solid #eee5d9}.course-row:last-child{border-bottom:0}.course-row img{width:54px;height:54px;border-radius:9px;object-fit:cover;background:#eee}.course-info{min-width:0}.course-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.course-info span{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row-actions{display:flex;gap:5px}.icon-button{min-height:36px;padding:0 10px;background:#f3eee7;color:var(--brown)}
+    .editor{position:sticky;top:94px;padding:20px}.editor h2{margin:0 0 4px}.editor p{margin:0 0 16px;color:var(--muted)}.editor-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.editor-actions .primary{grid-column:1/-1}.empty{padding:34px;text-align:center;color:var(--muted)}
+    .note{margin-top:20px;padding:14px 16px;border-left:4px solid var(--gold);background:#fff;color:var(--muted)}
+    @media(max-width:850px){.workspace{grid-template-columns:1fr}.editor{position:static;order:-1}.course-list{max-height:none}.publish-box{grid-template-columns:1fr}.publish-box button{width:100%}.heading{align-items:start;flex-direction:column}.panel-head{align-items:stretch;flex-direction:column}.panel-head input{max-width:none}}
+    @media(max-width:520px){.topbar-inner{align-items:stretch;flex-direction:column}.top-actions{display:grid;grid-template-columns:1fr 1fr}.layout{padding:20px 12px 50px}.course-row{grid-template-columns:46px minmax(0,1fr);padding:11px}.course-row img{width:46px;height:46px}.row-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr)}.row-actions button{width:100%}}
+  </style>
 </head>
-<body><main><span>ÁREA ADMINISTRATIVA</span><h1>Painel seguro no cPanel</h1><p>Esta é a versão pública do GitHub Pages. O painel administrativo completo funciona no cPanel, onde a senha e os dados ficam protegidos no servidor.</p><p>Depois de publicar o pacote no cPanel, acesse <strong>/admin/</strong> no domínio definitivo.</p><a href="../">Voltar ao site</a></main></body>
+<body>
+  <section id="login-page" class="login-page">
+    <form id="login-form" class="login-card">
+      <span class="kicker">ÁREA ADMINISTRATIVA</span>
+      <h1>Gerenciar cursos</h1>
+      <p>Entre para alterar o catálogo publicado no GitHub Pages.</p>
+      <label>Usuário<input id="username" autocomplete="username" required></label>
+      <label>Senha<input id="password" type="password" autocomplete="current-password" required></label>
+      <button class="primary" type="submit">Entrar no painel</button>
+      <div id="login-message" class="message" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <section id="app" class="app hidden">
+    <header class="topbar"><div class="topbar-inner">
+      <div class="brand"><strong>Gambeti EaD</strong><span>Painel do catálogo</span></div>
+      <div class="top-actions"><a href="../" target="_blank" rel="noopener">Ver site</a><button id="logout" class="secondary" type="button">Sair</button></div>
+    </div></header>
+    <main class="layout">
+      <div class="heading"><div><span class="kicker">ADMINISTRAÇÃO</span><h1>Cursos publicados</h1><p>Edite o catálogo e publique as alterações no site.</p></div><span id="count" class="count">0 cursos</span></div>
+
+      <section class="publish-box">
+        <label>Token do GitHub
+          <input id="github-token" type="password" autocomplete="off" placeholder="github_pat_...">
+          <small>O token é usado somente nesta aba e não é salvo no repositório.</small>
+        </label>
+        <button id="publish" class="primary" type="button">Publicar no site</button>
+        <div id="publish-status" class="publish-status" aria-live="polite"></div>
+      </section>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="panel-head"><h2>Lista de cursos</h2><input id="search" type="search" placeholder="Buscar curso..."></div>
+          <div id="course-list" class="course-list"></div>
+        </section>
+
+        <aside class="panel editor">
+          <h2 id="editor-title">Adicionar curso</h2>
+          <p>Preencha os dados exibidos no catálogo.</p>
+          <form id="course-form">
+            <label>Nome do curso<input id="course-name" required></label>
+            <label>Categoria<input id="course-category" required placeholder="Segurança do Trabalho"></label>
+            <label>Endereço da imagem<input id="course-image" type="url" required placeholder="https://..."></label>
+            <div class="editor-actions">
+              <button class="primary" type="submit">Salvar curso</button>
+              <button id="cancel-edit" class="secondary hidden" type="button">Cancelar</button>
+              <button id="delete-course" class="danger hidden" type="button">Excluir</button>
+            </div>
+          </form>
+        </aside>
+      </div>
+      <div class="note"><strong>Importante:</strong> depois de publicar, o GitHub Pages pode levar alguns instantes para mostrar a atualização.</div>
+    </main>
+  </section>
+
+  <script src="../courses.js"></script>
+  <script>
+    const REPOSITORY = "raphad2712-creator/site-de-cursos";
+    const BRANCH = "main";
+    const FILE_PATH = "courses.js";
+    const $ = (selector) => document.querySelector(selector);
+    let courses = (window.GAMBETI_COURSES || []).map((course) => [...course]);
+    let editingIndex = -1;
+
+    function setLoggedIn(loggedIn) {
+      $("#login-page").classList.toggle("hidden", loggedIn);
+      $("#app").classList.toggle("hidden", !loggedIn);
+      if (loggedIn) renderList();
+    }
+
+    $("#login-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if ($("#username").value === "admin" && $("#password").value === "admin@") {
+        sessionStorage.setItem("gambeti-admin", "1");
+        $("#login-message").textContent = "";
+        setLoggedIn(true);
+      } else {
+        $("#login-message").textContent = "Usuário ou senha incorretos.";
+      }
+    });
+
+    $("#logout").addEventListener("click", () => {
+      sessionStorage.removeItem("gambeti-admin");
+      sessionStorage.removeItem("gambeti-github-token");
+      setLoggedIn(false);
+    });
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, (character) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[character]));
+    }
+
+    function renderList() {
+      const term = $("#search").value.trim().toLocaleLowerCase("pt-BR");
+      const visible = courses.map((course, index) => ({course,index})).filter(({course}) => !term || `${course[0]} ${course[1]}`.toLocaleLowerCase("pt-BR").includes(term));
+      $("#count").textContent = `${courses.length} ${courses.length === 1 ? "curso" : "cursos"}`;
+      $("#course-list").innerHTML = visible.length ? visible.map(({course,index}) => `
+        <article class="course-row">
+          <img src="${escapeHtml(course[2])}" alt="" referrerpolicy="no-referrer">
+          <div class="course-info"><strong>${escapeHtml(course[0])}</strong><span>${escapeHtml(course[1])}</span></div>
+          <div class="row-actions">
+            <button class="icon-button" type="button" data-action="up" data-index="${index}" aria-label="Mover para cima">↑</button>
+            <button class="icon-button" type="button" data-action="down" data-index="${index}" aria-label="Mover para baixo">↓</button>
+            <button class="icon-button" type="button" data-action="edit" data-index="${index}">Editar</button>
+            <button class="icon-button" type="button" data-action="remove" data-index="${index}">Excluir</button>
+          </div>
+        </article>`).join("") : '<div class="empty">Nenhum curso encontrado.</div>';
+    }
+
+    $("#search").addEventListener("input", renderList);
+    $("#course-list").addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+      const index = Number(button.dataset.index);
+      const action = button.dataset.action;
+      if (action === "edit") return startEdit(index);
+      if (action === "remove") {
+        if (confirm(`Excluir o curso “${courses[index][0]}”?`)) { courses.splice(index,1); resetEditor(); renderList(); }
+        return;
+      }
+      const target = action === "up" ? index - 1 : index + 1;
+      if (target < 0 || target >= courses.length) return;
+      [courses[index], courses[target]] = [courses[target], courses[index]];
+      renderList();
+    });
+
+    function startEdit(index) {
+      editingIndex = index;
+      $("#editor-title").textContent = "Editar curso";
+      $("#course-name").value = courses[index][0];
+      $("#course-category").value = courses[index][1];
+      $("#course-image").value = courses[index][2];
+      $("#cancel-edit").classList.remove("hidden");
+      $("#delete-course").classList.remove("hidden");
+      if (innerWidth < 851) $("#editor-title").scrollIntoView({behavior:"smooth"});
+    }
+
+    function resetEditor() {
+      editingIndex = -1;
+      $("#editor-title").textContent = "Adicionar curso";
+      $("#course-form").reset();
+      $("#cancel-edit").classList.add("hidden");
+      $("#delete-course").classList.add("hidden");
+    }
+
+    $("#course-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const course = [$("#course-name").value.trim(), $("#course-category").value.trim(), $("#course-image").value.trim()];
+      if (editingIndex >= 0) courses[editingIndex] = course; else courses.unshift(course);
+      resetEditor(); renderList();
+    });
+    $("#cancel-edit").addEventListener("click", resetEditor);
+    $("#delete-course").addEventListener("click", () => {
+      if (editingIndex >= 0 && confirm(`Excluir o curso “${courses[editingIndex][0]}”?`)) { courses.splice(editingIndex,1); resetEditor(); renderList(); }
+    });
+
+    function encodeBase64(text) {
+      const bytes = new TextEncoder().encode(text);
+      let binary = "";
+      for (let index = 0; index < bytes.length; index += 8192) binary += String.fromCharCode(...bytes.subarray(index,index + 8192));
+      return btoa(binary);
+    }
+
+    async function githubRequest(url, options = {}) {
+      const token = $("#github-token").value.trim();
+      const response = await fetch(url, { ...options, headers: {Accept:"application/vnd.github+json",Authorization:`Bearer ${token}`,"X-GitHub-Api-Version":"2022-11-28",...(options.headers || {})} });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.message || `Erro ${response.status}`);
+      return data;
+    }
+
+    $("#publish").addEventListener("click", async () => {
+      const status = $("#publish-status");
+      const button = $("#publish");
+      status.className = "publish-status";
+      if (!$("#github-token").value.trim()) { status.textContent = "Informe o token do GitHub para publicar."; status.classList.add("error"); return; }
+      button.disabled = true; button.textContent = "Publicando..."; status.textContent = "Enviando alterações para o GitHub...";
+      try {
+        const apiUrl = `https://api.github.com/repos/${REPOSITORY}/contents/${FILE_PATH}`;
+        const current = await githubRequest(`${apiUrl}?ref=${BRANCH}`);
+        const content = `window.GAMBETI_COURSES = ${JSON.stringify(courses,null,2)};\n`;
+        await githubRequest(apiUrl, {method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:"Atualiza catálogo pelo painel",content:encodeBase64(content),sha:current.sha,branch:BRANCH})});
+        status.textContent = "Alterações publicadas. Aguarde alguns instantes e atualize o site."; status.classList.add("success");
+      } catch (error) {
+        status.textContent = `Não foi possível publicar: ${error.message}`; status.classList.add("error");
+      } finally { button.disabled = false; button.textContent = "Publicar no site"; }
+    });
+
+    setLoggedIn(sessionStorage.getItem("gambeti-admin") === "1");
+  </script>
+</body>
 </html>

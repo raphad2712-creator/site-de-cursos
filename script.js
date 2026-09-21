@@ -82,18 +82,17 @@ filters.forEach((filter) => filter.addEventListener("click", () => {
   updateCourses();
 }));
 
-async function loadCourses() {
+function loadCourses() {
   const fallback = window.GAMBETI_COURSES || [];
   try {
-    const response = await fetch("https://gambeti-ead.raphadd2712.chatgpt.site/api/public/courses", { cache: "no-store" });
-    if (!response.ok) throw new Error("Catálogo indisponível");
-    const data = await response.json();
-    renderCourses(Array.isArray(data.courses) ? data.courses : fallback);
+    const saved = JSON.parse(localStorage.getItem("gambeti_courses") || "null");
+    renderCourses(Array.isArray(saved) ? saved : fallback);
   } catch {
     renderCourses(fallback);
   }
 }
 
-void loadCourses();
+loadCourses();
 
 document.querySelector("#year").textContent = new Date().getFullYear();
+

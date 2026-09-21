@@ -83,7 +83,13 @@ filters.forEach((filter) => filter.addEventListener("click", () => {
 }));
 
 async function loadCourses() {
-  const fallback = window.GAMBETI_COURSES || [];
+  let savedCourses = null;
+  try {
+    savedCourses = JSON.parse(localStorage.getItem("gambeti-courses") || "null");
+  } catch {
+    savedCourses = null;
+  }
+  const fallback = Array.isArray(savedCourses) ? savedCourses : (window.GAMBETI_COURSES || []);
   const apiBase = String(window.GAMBETI_API_BASE || "").replace(/\/$/, "");
   const apiUrl = apiBase ? `${apiBase}/api/courses.php` : "api/courses.php";
   try {

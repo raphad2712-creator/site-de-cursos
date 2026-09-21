@@ -84,11 +84,16 @@ filters.forEach((filter) => filter.addEventListener("click", () => {
 
 async function loadCourses() {
   const fallback = window.GAMBETI_COURSES || [];
+  const apiBase = String(window.GAMBETI_API_BASE || "").replace(/\/$/, "");
+  const apiUrl = apiBase ? `${apiBase}/api/courses.php` : "api/courses.php";
   try {
-    const response = await fetch("https://gambeti-ead.raphadd2712.chatgpt.site/api/public/courses", { cache: "no-store" });
+    const response = await fetch(apiUrl, {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+    });
     if (!response.ok) throw new Error("Catálogo indisponível");
     const data = await response.json();
-    renderCourses(Array.isArray(data.courses) ? data.courses : fallback);
+    renderCourses(Array.isArray(data.courses) && data.courses.length ? data.courses : fallback);
   } catch {
     renderCourses(fallback);
   }

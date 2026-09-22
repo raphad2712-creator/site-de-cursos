@@ -378,11 +378,11 @@
         .main-text{margin-top:20mm;font-size:3.7mm;line-height:1.75;text-align:justify}
         .program{margin-top:9mm;font-size:3.42mm;line-height:1.65;text-align:justify}
         .issue-date{margin-top:7mm;text-align:right;font-size:3.2mm}
-        .signatures{margin-top:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8mm;align-items:end}
-        .signature{text-align:center;font-family:Arial,sans-serif;font-size:2.55mm;line-height:1.22;min-width:0}
-        .signature-img{height:20mm;display:flex;align-items:flex-end;justify-content:center;padding:0 2mm}
-        .signature-img img{max-width:46mm;max-height:18mm;width:auto;height:auto;object-fit:contain;display:block}
-        .signature-line{width:48mm;margin:1mm auto 1.2mm;border-top:.28mm solid #777}
+        .signatures{margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:5mm;align-items:end}
+        .signature{text-align:center;font-family:Arial,sans-serif;font-size:2.25mm;line-height:1.16;min-width:0}
+        .signature-img{height:14mm;display:flex;align-items:flex-end;justify-content:center;padding:0 1.5mm}
+        .signature-img img{max-width:34mm;max-height:12mm;width:auto;height:auto;object-fit:contain;display:block}
+        .signature-line{width:36mm;margin:.8mm auto 1mm;border-top:.28mm solid #777}
         .signature strong,.signature span{display:block}
         .footer{margin-top:6mm;text-align:center;font-family:Arial,sans-serif;font-size:2.75mm;word-spacing:7mm}
         @media print{body{background:#fff}.print{display:none}.page{margin:0}}
@@ -417,6 +417,13 @@
             <span>Eng. Civil e de Segurança do Trabalho</span>
             <span>CREA/SP 5069214758</span>
             <span>Responsável Técnica</span>
+          </div>
+          <div class="signature">
+            <div class="signature-img"></div>
+            <div class="signature-line"></div>
+            <strong>${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>
+            <span>${documentLabel} ${escapeHtml(documentNumber)}</span>
+            <span>Participante</span>
           </div>
         </div>
         <footer class="footer">- &nbsp;&nbsp; CNPJ 48.847.154/0001-40 &nbsp;&nbsp; comercial@gambeti.com.br &nbsp;&nbsp; www.gambeti.com.br</footer>

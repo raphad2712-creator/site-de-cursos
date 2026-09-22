@@ -76,8 +76,14 @@
             <h2>Novo certificado</h2>
             <p>Cadastre o formando e gere o documento pronto para impressão.</p>
             <form id="certificate-form">
-              <label>Nome completo<input id="student-name" required placeholder="Nome do formando"></label>
-              <label>CPF<input id="student-cpf" required inputmode="numeric" placeholder="000.000.000-00"></label>
+              <label><span id="student-name-label">Nome completo</span><input id="student-name" required placeholder="Nome do formando"></label>
+              <label>Tipo de cadastro
+                <select id="document-type" required>
+                  <option value="cpf">Pessoa física (CPF)</option>
+                  <option value="cnpj">Empresa (CNPJ)</option>
+                </select>
+              </label>
+              <label><span id="document-label">CPF</span><input id="student-document" required inputmode="numeric" placeholder="000.000.000-00"></label>
               <label>Curso<input id="certificate-course" required list="course-options" placeholder="Nome do curso"></label>
               <datalist id="course-options"></datalist>
               <label>Local do treinamento<input id="training-location" required></label>
@@ -241,7 +247,28 @@
     function formatCpf(value) {
       return value.replace(/\D/g, "").slice(0,11).replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
     }
-    $("#student-cpf").addEventListener("input", (event) => { event.target.value = formatCpf(event.target.value); });
+
+    function formatCnpj(value) {
+      return value.replace(/\D/g, "").slice(0,14)
+        .replace(/(\d{2})(\d)/,"$1.$2")
+        .replace(/(\d{3})(\d)/,"$1.$2")
+        .replace(/(\d{3})(\d)/,"$1/$2")
+        .replace(/(\d{4})(\d{1,2})$/,"$1-$2");
+    }
+
+    function updateDocumentField() {
+      const isCompany = $("#document-type").value === "cnpj";
+      $("#document-label").textContent = isCompany ? "CNPJ" : "CPF";
+      $("#student-name-label").textContent = isCompany ? "Empresa / Razão social" : "Nome completo";
+      $("#student-name").placeholder = isCompany ? "Nome da empresa" : "Nome do formando";
+      $("#student-document").placeholder = isCompany ? "00.000.000/0000-00" : "000.000.000-00";
+      $("#student-document").value = isCompany ? formatCnpj($("#student-document").value) : formatCpf($("#student-document").value);
+    }
+
+    $("#document-type").addEventListener("change", updateDocumentField);
+    $("#student-document").addEventListener("input", (event) => {
+      event.target.value = $("#document-type").value === "cnpj" ? formatCnpj(event.target.value) : formatCpf(event.target.value);
+    });
 
     function formatDate(value) {
       if (!value) return "";
@@ -275,7 +302,7 @@
 
     function renderCertificates() {
       const term = $("#certificate-search").value.trim().toLocaleLowerCase("pt-BR");
-      const visible = certificates.filter((item) => !term || `${item.studentName} ${item.cpf} ${item.course} ${item.code}`.toLocaleLowerCase("pt-BR").includes(term));
+      const visible = certificates.filter((item) => !term || `${item.studentName} ${item.documentNumber || item.cpf || ""} ${item.course} ${item.code}`.toLocaleLowerCase("pt-BR").includes(term));
       $("#certificate-list").innerHTML = visible.length ? visible.map((item) => `
         <article class="cert-item"><div><strong>${escapeHtml(item.studentName)}</strong><span>${escapeHtml(item.course)} · ${escapeHtml(item.code)}</span><span>Conclusão: ${escapeHtml(formatDate(item.completionDate))}</span></div>
         <div class="cert-actions"><button class="secondary" type="button" data-cert-view="${item.id}">Visualizar</button><button class="danger" type="button" data-cert-delete="${item.id}">Excluir</button></div></article>`).join("") : '<div class="empty">Nenhum certificado encontrado.</div>';
@@ -288,7 +315,9 @@
       const certificate = {
         id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         studentName: $("#student-name").value.trim(),
-        cpf: $("#student-cpf").value.trim(),
+        documentType: $("#document-type").value,
+        documentNumber: $("#student-document").value.trim(),
+        cpf: $("#document-type").value === "cpf" ? $("#student-document").value.trim() : "",
         course: $("#certificate-course").value.trim(),
         trainingLocation: $("#training-location").value.trim(),
         startDate: $("#start-date").value,
@@ -323,6 +352,9 @@
       if (!popup) { alert("Permita a abertura de pop-ups para visualizar o certificado."); return; }
 
       const technician = item.technician || "Célio Campos";
+      const documentType = item.documentType || "cpf";
+      const documentNumber = item.documentNumber || item.cpf || "";
+      const documentLabel = documentType === "cnpj" ? "CNPJ" : "CPF";
       const technicianSignature = SIGNATURES[technician] || "";
       const pauloSignature = SIGNATURES["Paulo Guerra Júnior"];
       const erikaSignature = SIGNATURES["Erika Gambeti Viana Lumelino"];
@@ -359,7 +391,7 @@
       <main class="page"><section class="certificate">
         <header class="header"><img src="${logoUrl}" alt="Gambeti"><h1>Certificado</h1></header>
         <div class="main-text">
-          Certificamos que, <strong>${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>, CPF Nº <strong>${escapeHtml(item.cpf)}</strong>, participou do <strong>${escapeHtml(item.course.toLocaleUpperCase("pt-BR"))}</strong>, ministrado em ${escapeHtml(trainingLocation)}, no período de <strong>${escapeHtml(formatDate(startDate))}</strong> a <strong>${escapeHtml(formatDate(endDate))}</strong>, com duração de <strong>${escapeHtml(item.workload)}</strong>. Certificado Nº <strong>${escapeHtml(item.code)}</strong> válido até <strong>${escapeHtml(formatDate(validUntil))}</strong>.
+          Certificamos que, <strong>${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>, ${documentLabel} Nº <strong>${escapeHtml(documentNumber)}</strong>, participou do <strong>${escapeHtml(item.course.toLocaleUpperCase("pt-BR"))}</strong>, ministrado em ${escapeHtml(trainingLocation)}, no período de <strong>${escapeHtml(formatDate(startDate))}</strong> a <strong>${escapeHtml(formatDate(endDate))}</strong>, com duração de <strong>${escapeHtml(item.workload)}</strong>. Certificado Nº <strong>${escapeHtml(item.code)}</strong> válido até <strong>${escapeHtml(formatDate(validUntil))}</strong>.
         </div>
         <div class="program"><strong>CONTEÚDO PROGRAMÁTICO:</strong> ${escapeHtml(programContent).replace(/\n/g," ")}</div>
         <div class="issue-date">São Paulo, ${escapeHtml(formatLongDate(endDate))}.</div>
@@ -390,7 +422,7 @@
             <div class="signature-img"></div>
             <div class="signature-line"></div>
             <strong>${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>
-            <span>CPF ${escapeHtml(item.cpf)}</span>
+            <span>${documentLabel} ${escapeHtml(documentNumber)}</span>
           </div>
         </div>
         <footer class="footer">- &nbsp;&nbsp; CNPJ 48.847.154/0001-40 &nbsp;&nbsp; comercial@gambeti.com.br &nbsp;&nbsp; www.gambeti.com.br</footer>
@@ -398,6 +430,7 @@
       popup.document.close();
     }
 
+    updateDocumentField();
     setCertificateDefaults();
     setLoggedIn(sessionStorage.getItem("gambeti-admin") === "1");
   </script>

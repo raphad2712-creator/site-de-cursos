@@ -378,13 +378,15 @@
         .main-text{margin-top:20mm;font-size:3.7mm;line-height:1.75;text-align:justify}
         .program{margin-top:9mm;font-size:3.42mm;line-height:1.65;text-align:justify}
         .issue-date{margin-top:7mm;text-align:right;font-size:3.2mm}
-        .signatures{margin-top:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:5mm;align-items:end}
-        .signature{text-align:center;font-family:Arial,sans-serif;font-size:2.25mm;line-height:1.16;min-width:0}
-        .signature-img{height:14mm;display:flex;align-items:flex-end;justify-content:center;padding:0 1.5mm}
-        .signature-img img{max-width:34mm;max-height:12mm;width:auto;height:auto;object-fit:contain;display:block}
-        .signature-line{width:36mm;margin:.8mm auto 1mm;border-top:.28mm solid #777}
-        .signature strong,.signature span{display:block}
-        .footer{margin-top:6mm;text-align:center;font-family:Arial,sans-serif;font-size:2.75mm;word-spacing:7mm}
+        .signatures{margin-top:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4mm;align-items:end}
+        .signature{height:40mm;display:grid;grid-template-rows:15mm 2mm 8mm 15mm;align-items:start;text-align:center;font-family:Arial,sans-serif;font-size:2.2mm;line-height:1.18;min-width:0;padding:0 1mm}
+        .signature-img{height:15mm;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+        .signature-img img{display:block;max-width:38mm;max-height:13mm;width:auto;height:auto;object-fit:contain;object-position:center bottom}
+        .signature-line{width:38mm;max-width:100%;margin:.7mm auto 0;border-top:.28mm solid #777}
+        .signature-name{min-height:8mm;display:flex!important;align-items:flex-start;justify-content:center;padding:1mm 1mm 0;font-size:2.35mm;line-height:1.18;overflow-wrap:anywhere}
+        .signature-meta{min-height:15mm;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:.3mm}
+        .signature-meta span{display:block}
+        .footer{margin-top:5mm;text-align:center;font-family:Arial,sans-serif;font-size:2.75mm;word-spacing:7mm}
         @media print{body{background:#fff}.print{display:none}.page{margin:0}}
       </style></head><body>
       <button class="print" onclick="window.print()">Imprimir / salvar PDF</button>
@@ -399,31 +401,37 @@
           <div class="signature">
             <div class="signature-img"><img src="${technicianSignature}" alt="Assinatura de ${escapeHtml(technician)}"></div>
             <div class="signature-line"></div>
-            <strong>${escapeHtml(technician)}</strong>
-            <span>Técnico / Instrutor</span>
+            <strong class="signature-name">${escapeHtml(technician)}</strong>
+            <div class="signature-meta"><span>Técnico / Instrutor</span></div>
           </div>
           <div class="signature">
             <div class="signature-img"><img src="${pauloSignature}" alt="Assinatura de Paulo Guerra Júnior"></div>
             <div class="signature-line"></div>
-            <strong>Paulo Guerra Júnior</strong>
-            <span>Eng. Eletricista e de Segurança do Trabalho</span>
-            <span>CREA/SP 600573420</span>
-            <span>Responsável Técnico</span>
+            <strong class="signature-name">Paulo Guerra Júnior</strong>
+            <div class="signature-meta">
+              <span>Eng. Eletricista e de Segurança do Trabalho</span>
+              <span>CREA/SP 600573420</span>
+              <span>Responsável Técnico</span>
+            </div>
           </div>
           <div class="signature">
             <div class="signature-img"><img src="${erikaSignature}" alt="Assinatura de Erika Gambeti Viana Lumelino"></div>
             <div class="signature-line"></div>
-            <strong>Erika Gambeti Viana Lumelino</strong>
-            <span>Eng. Civil e de Segurança do Trabalho</span>
-            <span>CREA/SP 5069214758</span>
-            <span>Responsável Técnica</span>
+            <strong class="signature-name">Erika Gambeti Viana Lumelino</strong>
+            <div class="signature-meta">
+              <span>Eng. Civil e de Segurança do Trabalho</span>
+              <span>CREA/SP 5069214758</span>
+              <span>Responsável Técnica</span>
+            </div>
           </div>
           <div class="signature">
             <div class="signature-img"></div>
             <div class="signature-line"></div>
-            <strong>${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>
-            <span>${documentLabel} ${escapeHtml(documentNumber)}</span>
-            <span>Participante</span>
+            <strong class="signature-name">${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>
+            <div class="signature-meta">
+              <span>${documentLabel} ${escapeHtml(documentNumber)}</span>
+              <span>Participante</span>
+            </div>
           </div>
         </div>
         <footer class="footer">- &nbsp;&nbsp; CNPJ 48.847.154/0001-40 &nbsp;&nbsp; comercial@gambeti.com.br &nbsp;&nbsp; www.gambeti.com.br</footer>

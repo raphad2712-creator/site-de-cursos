@@ -364,29 +364,33 @@
       const trainingLocation = item.trainingLocation || DEFAULT_LOCATION;
       const programContent = item.programContent || DEFAULT_PROGRAM;
       const logoUrl = new URL("../gambeti-logo.png", location.href).href;
+      const technicianMeta = technician === "Célio Campos"
+        ? ["Téc. em Eletrotécnica e Eletroeletrônica","CFT/SP: 2602704733","Téc. em Segurança do Trabalho","MTP/SP:0047855","Instrutor"]
+        : [];
 
       popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Certificado - ${escapeHtml(item.studentName)}</title><style>
         @page{size:A4 landscape;margin:0}
         *{box-sizing:border-box}
         body{margin:0;background:#ddd;color:#111;font-family:Georgia,"Times New Roman",serif}
         .print{position:fixed;top:16px;right:16px;z-index:4;border:0;border-radius:8px;padding:12px 18px;background:#4a2f20;color:#fff;font:700 14px Arial,sans-serif;cursor:pointer}
-        .page{width:297mm;height:210mm;margin:0 auto;background:#fff;padding:3.2mm}
-        .certificate{height:100%;border:1.6mm solid #111;padding:9mm 12mm 7mm;display:flex;flex-direction:column}
-        .header{display:grid;grid-template-columns:78mm 1fr;align-items:center;gap:7mm}
-        .header img{width:76mm;height:25mm;object-fit:contain;object-position:left center}
-        .header h1{margin:0;font-size:25mm;line-height:.9;font-weight:700;letter-spacing:.2mm}
-        .main-text{margin-top:20mm;font-size:3.7mm;line-height:1.75;text-align:justify}
-        .program{margin-top:9mm;font-size:3.42mm;line-height:1.65;text-align:justify}
-        .issue-date{margin-top:7mm;text-align:right;font-size:3.2mm}
-        .signatures{margin-top:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4mm;align-items:end}
-        .signature{height:40mm;display:grid;grid-template-rows:15mm 2mm 8mm 15mm;align-items:start;text-align:center;font-family:Arial,sans-serif;font-size:2.2mm;line-height:1.18;min-width:0;padding:0 1mm}
-        .signature-img{height:15mm;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
-        .signature-img img{display:block;max-width:38mm;max-height:13mm;width:auto;height:auto;object-fit:contain;object-position:center bottom}
-        .signature-line{width:38mm;max-width:100%;margin:.7mm auto 0;border-top:.28mm solid #777}
-        .signature-name{min-height:8mm;display:flex!important;align-items:flex-start;justify-content:center;padding:1mm 1mm 0;font-size:2.35mm;line-height:1.18;overflow-wrap:anywhere}
-        .signature-meta{min-height:15mm;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:.3mm}
+        .page{width:297mm;height:210mm;margin:0 auto;background:#fff;padding:3mm}
+        .certificate{height:100%;border:1.55mm solid #111;padding:10mm 11.5mm 7mm;display:flex;flex-direction:column}
+        .header{display:grid;grid-template-columns:78mm 1fr;align-items:center;gap:2mm}
+        .header img{width:76mm;height:24mm;object-fit:contain;object-position:left center}
+        .header h1{margin:0;font-size:24.5mm;line-height:.92;font-weight:700;letter-spacing:0}
+        .main-text{margin-top:18.5mm;font-size:3.72mm;line-height:1.68;text-align:justify}
+        .program{margin-top:9.5mm;font-size:3.38mm;line-height:1.62;text-align:justify}
+        .issue-date{margin-top:8mm;text-align:right;font-size:3.15mm}
+        .signatures{margin-top:auto;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3.5mm;align-items:end}
+        .signature{height:42mm;display:grid;grid-template-rows:20mm 2mm 7mm 13mm;align-items:start;text-align:center;font-family:Arial,sans-serif;font-size:2.15mm;line-height:1.17;min-width:0;padding:0 .5mm}
+        .signature-img{height:20mm;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+        .signature-img img{display:block;max-width:48mm;max-height:19mm;width:auto;height:auto;object-fit:contain;object-position:center bottom}
+        .signature.fixed .signature-img img{max-width:47mm;max-height:18mm}
+        .signature-line{width:44mm;max-width:100%;margin:.5mm auto 0;border-top:.25mm solid #777}
+        .signature-name{min-height:7mm;display:flex!important;align-items:flex-start;justify-content:center;padding:.7mm .5mm 0;font-size:2.25mm;line-height:1.15;overflow-wrap:anywhere}
+        .signature-meta{min-height:13mm;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:.15mm}
         .signature-meta span{display:block}
-        .footer{margin-top:5mm;text-align:center;font-family:Arial,sans-serif;font-size:2.75mm;word-spacing:7mm}
+        .footer{margin-top:4.5mm;text-align:center;font-family:Arial,sans-serif;font-size:2.7mm;word-spacing:7mm}
         @media print{body{background:#fff}.print{display:none}.page{margin:0}}
       </style></head><body>
       <button class="print" onclick="window.print()">Imprimir / salvar PDF</button>
@@ -402,9 +406,9 @@
             <div class="signature-img"><img src="${technicianSignature}" alt="Assinatura de ${escapeHtml(technician)}"></div>
             <div class="signature-line"></div>
             <strong class="signature-name">${escapeHtml(technician)}</strong>
-            <div class="signature-meta"><span>Técnico / Instrutor</span></div>
+            <div class="signature-meta">${technicianMeta.map((line) => `<span>${escapeHtml(line)}</span>`).join("")}</div>
           </div>
-          <div class="signature">
+          <div class="signature fixed">
             <div class="signature-img"><img src="${pauloSignature}" alt="Assinatura de Paulo Guerra Júnior"></div>
             <div class="signature-line"></div>
             <strong class="signature-name">Paulo Guerra Júnior</strong>
@@ -414,7 +418,7 @@
               <span>Responsável Técnico</span>
             </div>
           </div>
-          <div class="signature">
+          <div class="signature fixed">
             <div class="signature-img"><img src="${erikaSignature}" alt="Assinatura de Erika Gambeti Viana Lumelino"></div>
             <div class="signature-line"></div>
             <strong class="signature-name">Erika Gambeti Viana Lumelino</strong>

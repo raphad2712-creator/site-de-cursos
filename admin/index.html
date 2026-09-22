@@ -81,7 +81,19 @@
               <label>Curso<input id="certificate-course" required list="course-options" placeholder="Nome do curso"></label>
               <datalist id="course-options"></datalist>
               <div class="form-row"><label>Carga horária<input id="workload" required placeholder="8 horas"></label><label>Conclusão<input id="completion-date" required type="date"></label></div>
-              <label>Responsável / empresa<input id="instructor" required value="Gambeti Engenharia e Treinamentos"></label>
+              <label>Técnico responsável
+                <select id="technician" required>
+                  <option value="">Selecione o técnico</option>
+                  <option>Bianca Ferreira Ribeiro</option>
+                  <option>Célio Campos</option>
+                  <option>Leonardo Marques</option>
+                  <option>PAULO EDUARDO DE AZEREDO PASSOS NASCIMENTO</option>
+                  <option>Wanderlei Alves</option>
+                  <option>ROSINALDO NEVES DE OLIVEIRA</option>
+                  <option>Piero Bon</option>
+                </select>
+              </label>
+              <p style="margin:8px 0;color:var(--muted);font-size:13px">Paulo Guerra Júnior e Erika Gambeti Viana Lumelino permanecem fixos em todos os certificados.</p>
               <button class="primary" type="submit" style="width:100%;margin-top:10px">Criar certificado</button>
             </form>
           </section>
@@ -240,13 +252,14 @@
         id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
         studentName: $("#student-name").value.trim(), cpf: $("#student-cpf").value.trim(),
         course: $("#certificate-course").value.trim(), workload: $("#workload").value.trim(),
-        completionDate: $("#completion-date").value, instructor: $("#instructor").value.trim(),
+        completionDate: $("#completion-date").value,
+        technician: $("#technician").value,
         code: `CERT-${now.getFullYear()}-${String(Date.now()).slice(-6)}`
       };
       certificates.unshift(certificate);
       persistCertificates();
       event.target.reset();
-      $("#instructor").value = "Gambeti Engenharia e Treinamentos";
+      $("#technician").value = "";
       openCertificate(certificate);
     });
 
@@ -265,7 +278,7 @@
       const popup = window.open("", "_blank");
       if (!popup) { alert("Permita a abertura de pop-ups para visualizar o certificado."); return; }
       popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Certificado - ${escapeHtml(item.studentName)}</title><style>
-        @page{size:A4 landscape;margin:0}*{box-sizing:border-box}body{margin:0;background:#eee;font-family:Georgia,serif;color:#382719}.page{width:297mm;height:210mm;margin:auto;padding:13mm;background:#fff}.border{height:100%;padding:9mm;border:3px solid #8b6421;outline:1px solid #c9a75f;outline-offset:-8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}.brand{color:#8b6421;font:700 15px Arial,sans-serif;letter-spacing:.2em}.title{margin:12px 0 22px;font-size:52px;color:#4a2f20}.text{max-width:235mm;font-size:21px;line-height:1.8}.name{display:block;margin:8px 0;font-size:34px;color:#4a2f20}.details{margin-top:18px;font:16px Arial,sans-serif}.footer{width:100%;margin-top:30px;display:flex;justify-content:space-around;font:14px Arial,sans-serif}.line{min-width:72mm;padding-top:8px;border-top:1px solid #382719}.code{margin-top:18px;color:#6d6259;font:12px Arial,sans-serif}.print{position:fixed;right:18px;top:18px;border:0;border-radius:8px;padding:12px 18px;background:#4a2f20;color:#fff;font-weight:700}@media print{body{background:#fff}.print{display:none}.page{margin:0}}</style></head><body><button class="print" onclick="print()">Imprimir / salvar PDF</button><main class="page"><div class="border"><div class="brand">GAMBETI ENGENHARIA E TREINAMENTOS</div><h1 class="title">CERTIFICADO</h1><div class="text">Certificamos que <strong class="name">${escapeHtml(item.studentName)}</strong> CPF ${escapeHtml(item.cpf)}, concluiu o curso <strong>${escapeHtml(item.course)}</strong>, com carga horária de <strong>${escapeHtml(item.workload)}</strong>, em ${escapeHtml(formatDate(item.completionDate))}.</div><div class="footer"><div class="line">${escapeHtml(item.studentName)}<br>Participante</div><div class="line">${escapeHtml(item.instructor)}<br>Responsável</div></div><div class="code">Código de validação: ${escapeHtml(item.code)}</div></div></main></body></html>`);
+        @page{size:A4 landscape;margin:0}*{box-sizing:border-box}body{margin:0;background:#eee;font-family:Georgia,serif;color:#382719}.page{width:297mm;height:210mm;margin:auto;padding:13mm;background:#fff}.border{height:100%;padding:9mm;border:3px solid #8b6421;outline:1px solid #c9a75f;outline-offset:-8px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}.brand{color:#8b6421;font:700 15px Arial,sans-serif;letter-spacing:.2em}.title{margin:12px 0 22px;font-size:52px;color:#4a2f20}.text{max-width:235mm;font-size:21px;line-height:1.8}.name{display:block;margin:8px 0;font-size:34px;color:#4a2f20}.details{margin-top:18px;font:16px Arial,sans-serif}.footer{width:100%;margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font:12px Arial,sans-serif}.line{min-width:0;padding-top:8px;border-top:1px solid #382719}.code{margin-top:18px;color:#6d6259;font:12px Arial,sans-serif}.print{position:fixed;right:18px;top:18px;border:0;border-radius:8px;padding:12px 18px;background:#4a2f20;color:#fff;font-weight:700}@media print{body{background:#fff}.print{display:none}.page{margin:0}}</style></head><body><button class="print" onclick="print()">Imprimir / salvar PDF</button><main class="page"><div class="border"><div class="brand">GAMBETI ENGENHARIA E TREINAMENTOS</div><h1 class="title">CERTIFICADO</h1><div class="text">Certificamos que <strong class="name">${escapeHtml(item.studentName)}</strong> CPF ${escapeHtml(item.cpf)}, concluiu o curso <strong>${escapeHtml(item.course)}</strong>, com carga horária de <strong>${escapeHtml(item.workload)}</strong>, em ${escapeHtml(formatDate(item.completionDate))}.</div><div class="footer"><div class="line">${escapeHtml(item.technician || "Técnico responsável")}<br>Técnico / Instrutor</div><div class="line">Paulo Guerra Júnior<br>Eng. Eletricista e de Segurança do Trabalho<br>CREA/SP 600573420<br>Responsável Técnico</div><div class="line">Erika Gambeti Viana Lumelino<br>Eng. Civil e de Segurança do Trabalho<br>CREA/SP 5069214758<br>Responsável Técnica</div></div><div class="code">Código de validação: ${escapeHtml(item.code)}</div></div></main></body></html>`);
       popup.document.close();
     }
 

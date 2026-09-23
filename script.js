@@ -89,7 +89,18 @@ async function loadCourses() {
   } catch {
     savedCourses = null;
   }
-  const fallback = Array.isArray(savedCourses) ? savedCourses : (window.GAMBETI_COURSES || []);
+  const defaultCourses = window.GAMBETI_COURSES || [];
+  const refreshedCoverNames = new Set([
+    "Máquina 10.2 - Manutenção em Rede de Água e Rede Coletora de Esgoto | Formação",
+    "Máquina 10.3 - Segurança em Serviços de Tratamento de Esgoto | Reciclagem",
+    "Máquina 10.3 - Segurança em Serviços de Tratamento de Esgoto | Formação",
+  ]);
+  const refreshedCovers = new Map(defaultCourses.filter((course) => refreshedCoverNames.has(course[0])).map((course) => [course[0], course[2]]));
+  if (Array.isArray(savedCourses)) {
+    savedCourses = savedCourses.map((course) => refreshedCovers.has(course[0]) ? [course[0], course[1], refreshedCovers.get(course[0])] : course);
+    localStorage.setItem("gambeti-courses", JSON.stringify(savedCourses));
+  }
+  const fallback = Array.isArray(savedCourses) ? savedCourses : defaultCourses;
   const apiBase = String(window.GAMBETI_API_BASE || "").replace(/\/$/, "");
   const apiUrl = apiBase ? `${apiBase}/api/courses.php` : "api/courses.php";
   try {

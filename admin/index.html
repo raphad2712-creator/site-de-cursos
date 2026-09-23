@@ -379,7 +379,7 @@
       popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Certificado - ${escapeHtml(item.studentName)}</title><style>
         @page{size:A4 landscape;margin:0}
         *{box-sizing:border-box}
-        body{margin:0;background:#ddd;color:#111;font-family:Georgia,"Times New Roman",serif}
+        body{margin:0;background:#ddd;color:#111;font-family:Georgia,"Times New Roman",serif}.page-wrap{width:297mm;height:210mm;margin:0 auto}
         .print{position:fixed;top:16px;right:16px;z-index:4;border:0;border-radius:8px;padding:12px 18px;background:#4a2f20;color:#fff;font:700 14px Arial,sans-serif;cursor:pointer}
         .page{width:297mm;height:210mm;margin:0 auto;background:#fff;padding:3mm}
         .certificate{height:100%;border:1.55mm solid #111;padding:9.5mm 11.5mm 6.5mm;display:flex;flex-direction:column}
@@ -405,10 +405,10 @@
         .signature-meta span{display:block}
         .footer{margin-top:4mm;display:grid;grid-template-columns:18mm 1.2fr 1.3fr 1.1fr;align-items:center;font-family:Arial,sans-serif;font-size:2.55mm;text-align:center}
         .footer span:first-child{text-align:right;padding-right:4mm}
-        @media screen and (max-width:900px){body{padding:8px;overflow:auto}.page{transform-origin:top left}.print{position:fixed;top:8px;right:8px}}@media print{body{background:#fff;padding:0}.print{display:none}.page{margin:0;transform:none!important}}
+        @media screen and (max-width:900px){body{padding:8px;overflow:auto}.page{transform-origin:top left}.print{position:fixed;top:8px;right:8px}}@media print{body{background:#fff;padding:0}.print{display:none}.page-wrap{width:297mm!important;height:210mm!important;margin:0}.page{margin:0;transform:none!important}}
       </style></head><body>
       <button class="print" onclick="window.print()">Imprimir / salvar PDF</button>
-      <main class="page"><section class="certificate">
+      <div class="page-wrap"><main class="page"><section class="certificate">
         <header class="header"><img src="${logoUrl}" alt="Gambeti"><h1>Certificado</h1></header>
         <div class="main-text">
           Certificamos que, <strong>${escapeHtml(item.studentName.toLocaleUpperCase("pt-BR"))}</strong>, ${documentLabel} Nº <strong>${escapeHtml(documentNumber)}</strong>, participou do <strong>${escapeHtml(item.course.toLocaleUpperCase("pt-BR"))}</strong>, ministrado em ${escapeHtml(trainingLocation)}, no período de <strong>${escapeHtml(formatDate(startDate))}</strong> a <strong>${escapeHtml(formatDate(endDate))}</strong>, com duração de <strong>${escapeHtml(item.workload)}</strong>. Certificado Nº <strong>${escapeHtml(item.code)}</strong> válido até <strong>${escapeHtml(formatDate(validUntil))}</strong>.
@@ -457,7 +457,7 @@
           </div>
         </div>
         <footer class="footer"><span>-</span><span>CNPJ 48.847.154/0001-40</span><span>comercial@gambeti.com.br</span><span>www.gambeti.com.br</span></footer>
-      </section></main></body></html>`);
+      </section></main></div><script>function fitCertificate(){var page=document.querySelector(".page"),wrap=document.querySelector(".page-wrap"),available=window.innerWidth-16,scale=Math.min(1,available/page.offsetWidth);page.style.transform="scale("+scale+")";wrap.style.width=(page.offsetWidth*scale)+"px";wrap.style.height=(page.offsetHeight*scale)+"px"}addEventListener("load",fitCertificate);addEventListener("resize",fitCertificate);<\/script></body></html>`);
       popup.document.close();
     }
 

@@ -376,7 +376,7 @@
         ? ["Téc. em Eletrotécnica e Eletroeletrônica","CFT/SP: 2602704733","Téc. em Segurança do Trabalho","MTP/SP:0047855","Instrutor"]
         : [];
 
-      popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Certificado - ${escapeHtml(item.studentName)}</title><style>
+      popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Certificado - ${escapeHtml(item.studentName)}</title><style>
         @page{size:A4 landscape;margin:0}
         *{box-sizing:border-box}
         body{margin:0;background:#ddd;color:#111;font-family:Georgia,"Times New Roman",serif}
@@ -396,7 +396,7 @@
         .signature.fixed .signature-img img{max-width:36mm;max-height:15mm}
         .signature.tech .signature-img img{max-width:40mm;max-height:16mm}
         .signature.participant .signature-img{height:17mm}
-        .signature-line{width:39mm;max-width:100%;margin:.35mm auto 0;border-top:.22mm solid #777}
+        .signature-line{width:39mm;max-width:100%;margin:.35mm auto 0;border-top:.22mm solid #777}.signature-line-hidden{border-top-color:transparent}
         .signature-name{min-height:5.8mm;display:flex!important;align-items:flex-start;justify-content:center;padding:.55mm .5mm 0;font-size:2.15mm;font-weight:400;line-height:1.12;overflow-wrap:anywhere}
         .signature.fixed .signature-name{font-size:2.12mm}
         .signature.participant .signature-name{font-size:2.12mm}
@@ -405,7 +405,7 @@
         .signature-meta span{display:block}
         .footer{margin-top:4mm;display:grid;grid-template-columns:18mm 1.2fr 1.3fr 1.1fr;align-items:center;font-family:Arial,sans-serif;font-size:2.55mm;text-align:center}
         .footer span:first-child{text-align:right;padding-right:4mm}
-        @media print{body{background:#fff}.print{display:none}.page{margin:0}}
+        @media screen and (max-width:900px){body{padding:8px;overflow:auto}.page{transform-origin:top left}.print{position:fixed;top:8px;right:8px}}@media print{body{background:#fff;padding:0}.print{display:none}.page{margin:0;transform:none!important}}
       </style></head><body>
       <button class="print" onclick="window.print()">Imprimir / salvar PDF</button>
       <main class="page"><section class="certificate">
@@ -436,6 +436,7 @@
           </div>
           <div class="signature fixed">
             <div class="signature-img"><img src="${erikaSignature}" alt="Assinatura de Erika Gambeti Viana Lumelino"></div>
+            <div class="signature-line signature-line-hidden" aria-hidden="true"></div>
             <strong class="signature-name">Erika Gambeti Viana Lumelino</strong>
             <div class="signature-meta">
               <span>Eng. Civil e de Segurança do Trabalho</span>

@@ -14,11 +14,25 @@ menu.querySelectorAll("a").forEach((link) => link.addEventListener("click", () =
   menuButton.setAttribute("aria-expanded", "false");
 }));
 
-const categoryKey = (category) => {
-  if (category.startsWith("NR 12")) return "nr12";
-  if (category.startsWith("NR 10")) return "nr10";
-  if (category.startsWith("NR 33")) return "nr33";
+const categoryKey = (name, category) => {
+  const text = `${name} ${category}`.toLocaleUpperCase("pt-BR");
+  if (/NR\s*0?5\b/.test(text)) return "nr05";
+  if (/NR\s*0?6\b/.test(text)) return "nr06";
+  if (/NR\s*10\b/.test(text)) return "nr10";
+  if (/NR\s*11\b|IÇAMENTO|MOVIMENTAÇÃO DE CARGAS/.test(text)) return "nr11";
+  if (/NR\s*12\b|MÁQUINAS?\s*10(?:\.|\s|-)/.test(text)) return "nr12";
+  if (/NR\s*13\b/.test(text)) return "nr13";
+  if (/NR\s*18\b/.test(text)) return "nr18";
+  if (/NR\s*33\b/.test(text)) return "nr33";
+  if (/NR\s*35\b/.test(text)) return "nr35";
+  if (/SOLDAGEM/.test(text)) return "soldagem";
   return "seguranca";
+};
+
+const categoryLabel = {
+  nr05: "NR 05", nr06: "NR 06", nr10: "NR 10", nr11: "NR 11",
+  nr12: "NR 12", nr13: "NR 13", nr18: "NR 18", nr33: "NR 33",
+  nr35: "NR 35", soldagem: "SOLDAGEM", seguranca: "SEGURANÇA",
 };
 
 const courseGrid = document.querySelector("#course-grid");
@@ -38,12 +52,12 @@ function renderCourses(courses) {
     const safeName = escapeHtml(name);
     const safeCategory = escapeHtml(category);
     const safeImage = escapeHtml(image);
-    const key = categoryKey(category);
+    const key = categoryKey(name, category);
     return `
   <a class="course-card" data-category="${key}" data-search="${escapeHtml(name.toLocaleLowerCase("pt-BR"))}" href="${LOGIN_URL}" target="_blank" rel="noopener noreferrer external" aria-label="${safeName} — entrar para acessar">
     <div class="course-photo">
       <img src="${safeImage}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
-      <span class="course-photo-badge">${key === "seguranca" ? "SEGURANÇA" : escapeHtml(category.split(" - ")[0])}</span>
+      <span class="course-photo-badge">${categoryLabel[key]}</span>
     </div>
     <div class="course-body">
       <div class="course-meta"><span>${safeCategory}</span><span>Curso EaD</span></div>

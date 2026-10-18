@@ -128,6 +128,14 @@
     const savedCourses = JSON.parse(localStorage.getItem("gambeti-courses") || "null");
     const defaultCourses = window.GAMBETI_COURSES || [];
     const refreshedCoverNames = new Set([
+    "Segurança em Laboratórios | Formação",
+    "Segurança em Soldagem | Reciclagem (04 Horas)",
+    "Produtos Químicos: Manuseio, Armazenamento e Emergências | Formação (8 horas)",
+    "Operação de Equipamentos de Içamento e Movimentação de Cargas | Reciclagem",
+    "Sinalização de Obras em Vias Públicas 0",
+    "NR 10 Básico - Instalações e Serviços com Eletricidade | Reciclagem (20 horas)",
+    "NR 10 Complementar - Sistema Elétrico de Potência (SEP) | Reciclagem (20 horas)",
+
       "Máquina 10.2 - Manutenção em Rede de Água e Rede Coletora de Esgoto | Formação",
       "Máquina 10.3 - Segurança em Serviços de Tratamento de Esgoto | Reciclagem",
       "Máquina 10.3 - Segurança em Serviços de Tratamento de Esgoto | Formação"
@@ -184,7 +192,7 @@
       $("#count").textContent = `${courses.length} ${courses.length === 1 ? "curso" : "cursos"}`;
       $("#course-list").innerHTML = visible.length ? visible.map(({course,index}) => `
         <article class="course-row">
-          <img src="${escapeHtml(course[2])}" alt="" referrerpolicy="no-referrer">
+          <img src="${escapeHtml(new URL(course[2], new URL("../", location.href)).href)}" alt="" referrerpolicy="no-referrer">
           <div class="course-info"><strong>${escapeHtml(course[0])}</strong><span>${escapeHtml(course[1])}</span></div>
           <div class="row-actions">
             <button class="icon-button" type="button" data-action="up" data-index="${index}" aria-label="Mover para cima">↑</button>

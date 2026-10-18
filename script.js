@@ -105,6 +105,14 @@ async function loadCourses() {
   }
   const defaultCourses = window.GAMBETI_COURSES || [];
   const refreshedCoverNames = new Set([
+    "Segurança em Laboratórios | Formação",
+    "Segurança em Soldagem | Reciclagem (04 Horas)",
+    "Produtos Químicos: Manuseio, Armazenamento e Emergências | Formação (8 horas)",
+    "Operação de Equipamentos de Içamento e Movimentação de Cargas | Reciclagem",
+    "Sinalização de Obras em Vias Públicas 0",
+    "NR 10 Básico - Instalações e Serviços com Eletricidade | Reciclagem (20 horas)",
+    "NR 10 Complementar - Sistema Elétrico de Potência (SEP) | Reciclagem (20 horas)",
+
     "Máquina 10.2 - Manutenção em Rede de Água e Rede Coletora de Esgoto | Formação",
     "Máquina 10.3 - Segurança em Serviços de Tratamento de Esgoto | Reciclagem",
     "Máquina 10.3 - Segurança em Serviços de Tratamento de Esgoto | Formação",
@@ -115,19 +123,7 @@ async function loadCourses() {
     localStorage.setItem("gambeti-courses", JSON.stringify(savedCourses));
   }
   const fallback = Array.isArray(savedCourses) ? savedCourses : defaultCourses;
-  const apiBase = String(window.GAMBETI_API_BASE || "").replace(/\/$/, "");
-  const apiUrl = apiBase ? `${apiBase}/api/courses.php` : "api/courses.php";
-  try {
-    const response = await fetch(apiUrl, {
-      cache: "no-store",
-      headers: { Accept: "application/json" },
-    });
-    if (!response.ok) throw new Error("Catálogo indisponível");
-    const data = await response.json();
-    renderCourses(Array.isArray(data.courses) && data.courses.length ? data.courses : fallback);
-  } catch {
-    renderCourses(fallback);
-  }
+  renderCourses(fallback);
 }
 
 void loadCourses();

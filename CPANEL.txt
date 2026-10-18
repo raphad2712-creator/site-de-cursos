@@ -1,0 +1,53 @@
+PACOTE DO SITE GAMBETI — 18/10/2026
+Origem: repositório raphad2712-creator/site-de-cursos
+Revisão: ee314a7
+
+INSTALAÇÃO
+1. Faça backup dos arquivos e do banco de dados existentes no cPanel.
+2. Envie este ZIP para a pasta do domínio e extraia os arquivos nessa pasta.
+3. Confira que index.html, styles.css, courses.js, script.js, gambeti-logo.png,
+   assets/ e admin/ estão juntos. Não é necessário instalar Node.js.
+4. Abra o domínio, atualize com Ctrl+F5 e confira os cursos.
+
+IMPORTANTE: MOODLE / LOGIN DOS ALUNOS
+O repositório contém a página pública e o painel local. NÃO contém o Moodle,
+seu banco de dados, contas de alunos, aulas ou login PHP.
+Os botões dos alunos continuam direcionando para:
+https://ead.gambeti.com.br/login/index.php
+A recuperação de senha continua em:
+https://ead.gambeti.com.br/login/forgot_password.php
+Não apague nem substitua login/, theme/, lib/, pluginfile.php, config.php,
+index.php, .htaccess, moodledata ou o banco de dados da instalação existente.
+Se o cPanel ainda não tiver Moodle, este ZIP sozinho NÃO cria o acesso dos alunos.
+Em uma pasta que já possui index.php, confirme qual arquivo o servidor usa como
+página inicial. Não foi incluído .htaccess para não alterar regras do Moodle.
+
+VERIFICAÇÕES
+54 cursos e 54 capas válidas, incluídas como arquivos locais.
+Logotipo válido. Referências locais de HTML e JavaScript conferidas.
+Login dos alunos retornou HTTP 200 e contém formulário com campo de senha.
+CSS principal, CSS auxiliar e logo do login verificados separadamente.
+Autenticação real não testada: não foram utilizados dados de alunos.
+Não foi possível concluir inspeção visual em navegador nesta sessão.
+Fontes Google continuam externas; há fontes alternativas no CSS.
+
+AJUSTES DE COMPATIBILIDADE NESTE ZIP
+Capas convertidas em arquivos locais, com caminhos relativos.
+Prévia das capas no /admin ajustada para o caminho da página inicial.
+Removida chamada para api/courses.php, ausente no repositório.
+Catálogo usa courses.js e as edições locais já previstas pelo painel.
+
+PAINEL /ADMIN
+Mantido conforme o repositório. A proteção de entrada é feita no JavaScript;
+não é autenticação segura no servidor. Não use para dados sensíveis.
+Cursos e certificados editados são salvos apenas no navegador usado.
+As mudanças NÃO são publicadas automaticamente para outros visitantes.
+Dados antigos do GitHub Pages não migram automaticamente para outro domínio.
+O projeto admin-app/ do repositório depende de ambiente próprio e não integra
+esta publicação estática para cPanel.
+As instruções se referem à instalação manual no cPanel.
+
+ATUALIZAÇÃO DE CAPAS
+Sete capas substituídas por artes exclusivas, criadas por geração de imagem,
+para eliminar as cinco duplicatas exatas e mais dois fundos repetidos.
+Os 54 cursos foram preservados. 

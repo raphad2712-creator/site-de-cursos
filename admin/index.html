@@ -168,8 +168,8 @@
 
     $("#login-form").addEventListener("submit", (event) => {
       event.preventDefault();
-      if ($("#username").value === "admin" && $("#password").value === "Gambeti@7Q4m9!") {
-        sessionStorage.setItem("gambeti-admin-v2", "1");
+      if ($("#username").value === "admin" && $("#password").value === "admin") {
+        sessionStorage.setItem("gambeti-admin-v3", "1");
         $("#login-message").textContent = "";
         setLoggedIn(true);
       } else {
@@ -178,7 +178,7 @@
     });
 
     $("#logout").addEventListener("click", () => {
-      sessionStorage.removeItem("gambeti-admin-v2");
+      sessionStorage.removeItem("gambeti-admin-v3");
       setLoggedIn(false);
     });
 
@@ -471,7 +471,7 @@
 
     updateDocumentField();
     setCertificateDefaults();
-    setLoggedIn(sessionStorage.getItem("gambeti-admin-v2") === "1");
+    setLoggedIn(sessionStorage.getItem("gambeti-admin-v3") === "1");
   </script>
 </body>
 </html>

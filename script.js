@@ -39,6 +39,13 @@ const courseGrid = document.querySelector("#course-grid");
 const search = document.querySelector("#course-search");
 const filters = [...document.querySelectorAll(".filter")];
 const empty = document.querySelector("#empty-state");
+const courseDetails = document.querySelector("#course-details");
+const detailImage = courseDetails.querySelector(".course-dialog-image");
+const detailCategory = courseDetails.querySelector(".course-dialog-category");
+const detailTitle = courseDetails.querySelector("#course-details-title");
+const detailDescription = courseDetails.querySelector("#course-details-description");
+const defaultCourses = window.GAMBETI_COURSES || [];
+const descriptionsByName = new Map(defaultCourses.map(([name, , , description]) => [name, description]));
 let cards = [];
 let activeFilter = "todos";
 
@@ -48,23 +55,30 @@ const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => (
 
 function renderCourses(courses) {
   courseGrid.innerHTML = courses.map((course) => {
-    const [name, category, image] = Array.isArray(course) ? course : [course.name, course.category, course.image];
+    const [name, category, image, description] = Array.isArray(course)
+      ? course
+      : [course.name, course.category, course.image, course.description];
     const safeName = escapeHtml(name);
     const safeCategory = escapeHtml(category);
-    const safeImage = escapeHtml(image);
+    const safeImage = escapeHtml(image || "");
+    const safeDescription = escapeHtml(description || descriptionsByName.get(name) ||
+      "Acesse a plataforma Gambeti EaD para consultar o conteúdo deste curso.");
     const key = categoryKey(name, category);
     return `
-  <a class="course-card" data-category="${key}" data-search="${escapeHtml(name.toLocaleLowerCase("pt-BR"))}" href="${LOGIN_URL}" target="_blank" rel="noopener noreferrer external" aria-label="${safeName} — entrar para acessar">
+  <article class="course-card" data-category="${key}" data-search="${escapeHtml(name.toLocaleLowerCase("pt-BR"))}" data-description="${safeDescription}">
     <div class="course-photo">
-      <img src="${safeImage}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+      <img alt="" ${safeImage ? `src="${safeImage}"` : ""} loading="lazy" decoding="async" referrerpolicy="no-referrer">
       <span class="course-photo-badge">${categoryLabel[key]}</span>
     </div>
     <div class="course-body">
       <div class="course-meta"><span>${safeCategory}</span><span>Curso EaD</span></div>
       <h3>${safeName}</h3>
-      <span class="course-cta">Entrar para acessar</span>
+      <div class="course-actions">
+        <a class="course-cta" href="${LOGIN_URL}" target="_blank" rel="noopener noreferrer external" aria-label="${safeName} — entrar para acessar">Entrar para acessar</a>
+        <button class="course-more" type="button" aria-haspopup="dialog" aria-label="Saiba mais sobre ${safeName}">Saiba mais</button>
+      </div>
     </div>
-  </a>
+  </article>
   `;
   }).join("");
   cards = [...document.querySelectorAll(".course-card")];
@@ -72,6 +86,22 @@ function renderCourses(courses) {
   if (allFilter) allFilter.textContent = `Todos (${courses.length})`;
   updateCourses();
 }
+
+courseGrid.addEventListener("click", (event) => {
+  const button = event.target.closest(".course-more");
+  if (!button) return;
+
+  const card = button.closest(".course-card");
+  const image = card.querySelector("img").getAttribute("src");
+  detailImage.hidden = !image;
+  if (image) detailImage.src = image;
+  else detailImage.removeAttribute("src");
+  detailCategory.textContent = card.querySelector(".course-meta span").textContent;
+  detailTitle.textContent = card.querySelector("h3").textContent;
+  detailDescription.textContent = card.dataset.description;
+  courseDetails.showModal();
+  courseDetails.scrollTop = 0;
+});
 
 function updateCourses() {
   const term = search.value.trim().toLocaleLowerCase("pt-BR");
@@ -103,7 +133,6 @@ async function loadCourses() {
   } catch {
     savedCourses = null;
   }
-  const defaultCourses = window.GAMBETI_COURSES || [];
   const refreshedCoverNames = new Set([
     "Segurança em Laboratórios | Formação",
     "Segurança em Soldagem | Reciclagem (04 Horas)",
@@ -119,7 +148,9 @@ async function loadCourses() {
   ]);
   const refreshedCovers = new Map(defaultCourses.filter((course) => refreshedCoverNames.has(course[0])).map((course) => [course[0], course[2]]));
   if (Array.isArray(savedCourses)) {
-    savedCourses = savedCourses.map((course) => refreshedCovers.has(course[0]) ? [course[0], course[1], refreshedCovers.get(course[0])] : course);
+    savedCourses = savedCourses.map((course) => refreshedCovers.has(course[0])
+      ? [course[0], course[1], refreshedCovers.get(course[0]), ...course.slice(3)]
+      : course);
     localStorage.setItem("gambeti-courses", JSON.stringify(savedCourses));
   }
   const fallback = Array.isArray(savedCourses) ? savedCourses : defaultCourses;

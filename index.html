@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="gambeti-logo.png">
-  <link rel="stylesheet" href="styles.css?v=20260928-imagens">
+  <link rel="stylesheet" href="styles.css?v=saiba-mais">
 </head>
 <body>
   <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -109,6 +109,18 @@
           </article>
         </div>
         <div class="empty-state" id="empty-state" hidden><strong>Nenhum curso encontrado.</strong><span>Tente outro termo ou selecione uma categoria diferente.</span></div>
+        <dialog class="course-dialog" id="course-details" aria-labelledby="course-details-title" aria-describedby="course-details-description">
+          <form method="dialog" class="course-dialog-header">
+            <button class="course-dialog-close" type="submit" aria-label="Fechar detalhes" autofocus>×</button>
+          </form>
+          <img class="course-dialog-image" alt="" decoding="async" referrerpolicy="no-referrer" hidden>
+          <div class="course-dialog-body">
+            <p class="course-dialog-category"></p>
+            <h2 id="course-details-title"></h2>
+            <p id="course-details-description"></p>
+            <a class="button" href="https://ead.gambeti.com.br/login/index.php" target="_blank" rel="noopener noreferrer external">Entrar para acessar</a>
+          </div>
+        </dialog>
       </div>
     </section>
 
@@ -129,7 +141,7 @@
     <div class="container footer-bottom"><span>© <span id="year"></span> Gambeti. Todos os direitos reservados.</span><a class="developer-credit" href="https://www.a2a.com.br/" target="_blank" rel="noopener noreferrer external">Desenvolvido por <strong>A2A Soluções</strong></a></div>
   </footer>
   <script src="config.js"></script>
-  <script src="courses.js"></script>
-  <script src="script.js"></script>
+  <script src="courses.js?v=saiba-mais"></script>
+  <script src="script.js?v=saiba-mais"></script>
 </body>
 </html>
